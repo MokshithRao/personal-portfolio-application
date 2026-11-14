@@ -21,7 +21,8 @@ async def home(request: Request):
     context = {
         "request": request,
         "theme": theme,
-        "skills": skills
+        "skills": skills,
+        "projects": projects
     }
 
     return templates.TemplateResponse(
@@ -61,5 +62,37 @@ skills = [
     {
         "category": "Tools & Platforms",
         "technologies": ["Git", "GitHub", "VS Code", "Google Colab"]
+    }
+]
+
+
+
+# Projects Data
+projects = [
+    {
+        "name": "Task Manager Application",
+        "category": "Full Stack Development",
+        "description": "A web-based task management application that allows users to create, view, update and manage tasks with persistent database storage.",
+        "technologies": [
+            "Python",
+            "FastAPI",
+            "Jinja2",
+            "SQLAlchemy",
+            "MySQL"
+        ],
+        "github": "https://github.com/MokshithRao/Task-Manager-Application"
+    },
+    {
+        "name": "AI Contract Intelligence System",
+        "category": "AI & Generative AI",
+        "description": "An AI-powered contract analysis system that leverages LegalBERT and Retrieval-Augmented Generation (RAG) to extract and understand information from legal documents.",
+        "technologies": [
+            "Python",
+            "LegalBERT",
+            "NLP",
+            "RAG",
+            "LLMs"
+        ],
+        "github": "https://github.com/MokshithRao/AI_Contract_Intelligence_System-Clause_Detection_-_LLM-Based_Rewriting-.git"
     }
 ]
