@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from datetime import datetime
 
 
 app = FastAPI()
@@ -22,7 +23,9 @@ async def home(request: Request):
         "request": request,
         "theme": theme,
         "skills": skills,
-        "projects": projects
+        "projects": projects,
+        "certifications": certifications,
+        "current_year": datetime.now().year
     }
 
     return templates.TemplateResponse(
@@ -94,5 +97,47 @@ projects = [
             "LLMs"
         ],
         "github": "https://github.com/MokshithRao/AI_Contract_Intelligence_System-Clause_Detection_-_LLM-Based_Rewriting-.git"
+    }
+]
+
+
+
+# Certifications Data
+certifications = [
+    {
+        "name": "Agentic AI Engineer",
+        "organization": "Ready Tensor",
+        "date": "November 2025",
+        "credential": ""
+    },
+    {
+        "name": "LLM Fine-Tuning Specialist",
+        "organization": "Ready Tensor",
+        "date": "May 2026",
+        "credential": ""
+    },
+    {
+        "name": "RAG Systems Expert",
+        "organization": "Ready Tensor",
+        "date": "September 2025",
+        "credential": ""
+    },
+    {
+        "name": "AWS Academy Machine Learning Foundations",
+        "organization": "AWS Academy",
+        "date": "2023",
+        "credential": ""
+    },
+    {
+        "name": "AWS Academy Cloud Foundations",
+        "organization": "AWS Academy",
+        "date": "",
+        "credential": ""
+    },
+    {
+        "name": "Google Data Analytics",
+        "organization": "Coursera",
+        "date": "2023",
+        "credential": ""
     }
 ]
