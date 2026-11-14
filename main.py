@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Form
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from datetime import datetime
@@ -16,8 +17,25 @@ templates = Jinja2Templates(directory="templates")
 
 
 @app.get("/")
-async def home(request: Request):
+async def home(request: Request, status: str = None, tech: str = None):
     theme = request.cookies.get("theme", "light")
+
+    filtered_projects = projects
+
+    if tech:
+        filtered_projects = []
+
+        for project in projects:
+            technology_found = False
+
+            for technology in project["technologies"]:
+                if technology.lower() == tech.lower():
+                    technology_found = True
+                    break
+
+            if technology_found:
+                filtered_projects.append(project)
+
 
     context = {
         "request": request,
@@ -25,7 +43,9 @@ async def home(request: Request):
         "skills": skills,
         "projects": projects,
         "certifications": certifications,
-        "current_year": datetime.now().year
+        "current_year": datetime.now().year,
+        "status": status,
+        "selected_tech": tech
     }
 
     return templates.TemplateResponse(
@@ -141,3 +161,66 @@ certifications = [
         "credential": ""
     }
 ]
+
+
+
+@app.post("/contact")
+async def contact(
+    request: Request,
+    name: str = Form(...),
+    email: str = Form(...),
+    subject: str = Form(...),
+    message: str = Form(...)
+):
+    
+    if not name.strip() or not email.strip() or not subject.strip() or not message.strip():
+        return RedirectResponse(
+            url="/?status=error#contact",
+            status_code=303
+        )
+
+    print("New Contact Form Submission")
+    print("Name:", name)
+    print("Email:", email)
+    print("Subject:", subject)
+    print("Message:", message)
+
+    return RedirectResponse(
+        url="/?status=success#contact",
+        status_code=303
+    )
+
+
+
+# Theme toggle endpoint
+@app.post("/set-theme")
+async def set_theme(request: Request):
+
+    current_theme = request.cookies.get("theme", "light")
+
+    if current_theme == "light":
+        new_theme = "dark"
+    else:
+        new_theme = "light"
+
+    referer = request.headers.get("referer")
+
+    redirect_url = "/"
+
+    if referer and referer.startswith("/") and not referer.startswith("//"):
+        redirect_url = referer
+
+    response = RedirectResponse(
+        url=redirect_url,
+        status_code=303
+    )
+
+    response.set_cookie(
+        key="theme",
+        value=new_theme,
+        max_age=2592000,
+        httponly=True,
+        samesite="lax"
+    )
+
+    return response
