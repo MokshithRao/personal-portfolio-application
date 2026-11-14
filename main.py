@@ -41,7 +41,7 @@ async def home(request: Request, status: str = None, tech: str = None):
         "request": request,
         "theme": theme,
         "skills": skills,
-        "projects": projects,
+        "projects": filtered_projects,
         "certifications": certifications,
         "current_year": datetime.now().year,
         "status": status,
