@@ -1,0 +1,47 @@
+<section id="certifications">
+
+    <h2>Certifications</h2>
+
+    <p>
+        Professional certifications and specialized training
+        that complement my technical knowledge and skills.
+    </p>
+
+    <div class="certifications-container">
+
+        {% for certification in certifications %}
+
+            <div class="certification-card">
+
+                <h3>{{ certification.name }}</h3>
+
+                <p>
+                    <strong>Issued By:</strong>
+                    {{ certification.organization }}
+                </p>
+
+                {% if certification.date %}
+
+                    <p>
+                        <strong>Issued:</strong>
+                        {{ certification.date }}
+                    </p>
+
+                {% endif %}
+
+                {% if certification.credential %}
+
+                    <a href="{{ certification.credential }}"
+                       target="_blank">
+                        View Credential
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>

@@ -1,0 +1,102 @@
+<section id="projects">
+
+    <h2>My Projects</h2>
+
+    <p>
+        Here are some of the projects I've worked on,
+        covering full stack development, data science
+        and artificial intelligence.
+    </p>
+
+    <!-- Technology Filter -->
+    <form action="/" method="GET">
+
+        <label for="tech">Filter by Technology:</label>
+
+        <select name="tech" id="tech">
+
+            <option value="">All Projects</option>
+
+            <option value="Python"
+                {% if selected_tech == "Python" %}selected{% endif %}>
+                Python
+            </option>
+
+            <option value="FastAPI"
+                {% if selected_tech == "FastAPI" %}selected{% endif %}>
+                FastAPI
+            </option>
+
+            <option value="MySQL"
+                {% if selected_tech == "MySQL" %}selected{% endif %}>
+                MySQL
+            </option>
+
+            <option value="RAG"
+                {% if selected_tech == "RAG" %}selected{% endif %}>
+                RAG
+            </option>
+
+            <option value="LegalBERT"
+                {% if selected_tech == "LegalBERT" %}selected{% endif %}>
+                LegalBERT
+            </option>
+
+        </select>
+
+        <button type="submit">Apply Filter</button>
+
+    </form>
+
+
+    <!-- Project Cards -->
+    <div class="projects-container">
+
+        {% if projects %}
+
+            {% for project in projects %}
+
+                <div class="project-card">
+
+                    <h3>{{ project.name }}</h3>
+
+                    <p>{{ project.description }}</p>
+
+                    <p>
+                        <strong>Category:</strong>
+                        {{ project.category }}
+                    </p>
+
+                    <div class="project-technologies">
+
+                        <strong>Technologies:</strong>
+
+                        {% for technology in project.technologies %}
+
+                            <span>{{ technology }}</span>
+
+                        {% endfor %}
+
+                    </div>
+
+                    {% if project.github %}
+
+                        <a href="{{ project.github }}" target="_blank">
+                            GitHub Repository
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>No projects found for the selected technology.</p>
+
+        {% endif %}
+
+    </div>
+
+</section>
