@@ -20,7 +20,8 @@ async def home(request: Request):
 
     context = {
         "request": request,
-        "theme": theme
+        "theme": theme,
+        "skills": skills
     }
 
     return templates.TemplateResponse(
@@ -28,3 +29,37 @@ async def home(request: Request):
         name="index.html",
         context=context
     )
+
+
+
+# Skills Data
+skills = [
+    {
+        "category": "Programming Languages",
+        "technologies": ["Python", "SQL"]
+    },
+    {
+        "category": "Backend Development",
+        "technologies": ["FastAPI", "Django", "REST APIs", "SQLAlchemy"]
+    },
+    {
+        "category": "Frontend Development",
+        "technologies": ["HTML", "CSS", "JavaScript", "Jinja2"]
+    },
+    {
+        "category": "Databases",
+        "technologies": ["MySQL", "PostgreSQL"]
+    },
+    {
+        "category": "Data Science & Machine Learning",
+        "technologies": ["NumPy", "Pandas", "Scikit-learn", "PyTorch"]
+    },
+    {
+        "category": "AI & Generative AI",
+        "technologies": ["LangChain", "Hugging Face", "RAG", "Transformers"]
+    },
+    {
+        "category": "Tools & Platforms",
+        "technologies": ["Git", "GitHub", "VS Code", "Google Colab"]
+    }
+]

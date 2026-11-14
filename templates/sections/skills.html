@@ -1,0 +1,34 @@
+<section id="skills">
+
+    <h2>Technical Skills</h2>
+
+    <p>
+        My technical skill set spans software development,
+        data science, machine learning and artificial intelligence.
+    </p>
+
+    <div class="skills-container">
+
+        {% for skill_group in skills %}
+
+            <div class="skill-category">
+
+                <h3>{{ skill_group.category }}</h3>
+
+                <ul>
+
+                    {% for technology in skill_group.technologies %}
+
+                        <li>{{ technology }}</li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
