@@ -9,6 +9,7 @@ __pycache__/
 
 # Environment Variables
 .env
+portfolio.db
 
 # VS Code
 .vscode/
