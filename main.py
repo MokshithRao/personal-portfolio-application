@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from datetime import datetime
 from sqlalchemy.orm import Session
 from database import engine, Base, get_db, initialize_database
-from models import Skill, Project, Certification
+from models import Skill, Project, Certification, ContactMessage
 
 
 app = FastAPI()
@@ -71,7 +71,8 @@ async def contact(
     name: str = Form(...),
     email: str = Form(...),
     subject: str = Form(...),
-    message: str = Form(...)
+    message: str = Form(...),
+    db: Session = Depends(get_db)
 ):
 
     if not name.strip() or not email.strip() or not subject.strip() or not message.strip():
@@ -80,11 +81,15 @@ async def contact(
             status_code=303
         )
 
-    print("New Contact Form Submission")
-    print("Name:", name)
-    print("Email:", email)
-    print("Subject:", subject)
-    print("Message:", message)
+    contact_message = ContactMessage(
+        name=name.strip(),
+        email=email.strip(),
+        subject=subject.strip(),
+        message=message.strip()
+    )
+
+    db.add(contact_message)
+    db.commit()
 
     return RedirectResponse(
         url="/?status=success#contact",
