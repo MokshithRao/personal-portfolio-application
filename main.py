@@ -1,8 +1,11 @@
-from fastapi import FastAPI, Request, Form
+from fastapi import FastAPI, Request, Depends, Form
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from datetime import datetime
+from sqlalchemy.orm import Session
+from database import engine, Base, get_db, initialize_database
+from models import Skill, Project, Certification
 
 
 app = FastAPI()
@@ -15,33 +18,33 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
-
 @app.get("/")
-async def home(request: Request, status: str = None, tech: str = None):
-    theme = request.cookies.get("theme", "light")
-
-    filtered_projects = projects
+def home(
+    request: Request,
+    status: str = None,
+    tech: str = None,
+    db: Session = Depends(get_db)
+):
+    skills = db.query(Skill).order_by(Skill.id).all()
+    projects = db.query(Project).order_by(Project.id).all()
+    certifications = db.query(Certification).order_by(Certification.id).all()
 
     if tech:
         filtered_projects = []
 
         for project in projects:
-            technology_found = False
-
-            for technology in project["technologies"]:
-                if technology.lower() == tech.lower():
-                    technology_found = True
-                    break
-
-            if technology_found:
+            if tech.lower() in [technology.lower() for technology in project.technologies]:
                 filtered_projects.append(project)
 
+        projects = filtered_projects
+
+    theme = request.cookies.get("theme", "light")
 
     context = {
         "request": request,
         "theme": theme,
         "skills": skills,
-        "projects": filtered_projects,
+        "projects": projects,
         "certifications": certifications,
         "current_year": datetime.now().year,
         "status": status,
@@ -55,113 +58,11 @@ async def home(request: Request, status: str = None, tech: str = None):
     )
 
 
-
 # Skills Data
-skills = [
-    {
-        "category": "Programming Languages",
-        "technologies": ["Python", "SQL"]
-    },
-    {
-        "category": "Backend Development",
-        "technologies": ["FastAPI", "Django", "REST APIs", "SQLAlchemy"]
-    },
-    {
-        "category": "Frontend Development",
-        "technologies": ["HTML", "CSS", "JavaScript", "Jinja2"]
-    },
-    {
-        "category": "Databases",
-        "technologies": ["MySQL", "PostgreSQL"]
-    },
-    {
-        "category": "Data Science & Machine Learning",
-        "technologies": ["NumPy", "Pandas", "Scikit-learn", "PyTorch"]
-    },
-    {
-        "category": "AI & Generative AI",
-        "technologies": ["LangChain", "Hugging Face", "RAG", "Transformers"]
-    },
-    {
-        "category": "Tools & Platforms",
-        "technologies": ["Git", "GitHub", "VS Code", "Google Colab"]
-    }
-]
-
-
-
 # Projects Data
-projects = [
-    {
-        "name": "Task Manager Application",
-        "category": "Full Stack Development",
-        "description": "A web-based task management application that allows users to create, view, update and manage tasks with persistent database storage.",
-        "technologies": [
-            "Python",
-            "FastAPI",
-            "Jinja2",
-            "SQLAlchemy",
-            "MySQL"
-        ],
-        "github": "https://github.com/MokshithRao/Task-Manager-Application"
-    },
-    {
-        "name": "AI Contract Intelligence System",
-        "category": "AI & Generative AI",
-        "description": "An AI-powered contract analysis system that leverages LegalBERT and Retrieval-Augmented Generation (RAG) to extract and understand information from legal documents.",
-        "technologies": [
-            "Python",
-            "LegalBERT",
-            "NLP",
-            "RAG",
-            "LLMs"
-        ],
-        "github": "https://github.com/MokshithRao/AI_Contract_Intelligence_System-Clause_Detection_-_LLM-Based_Rewriting-.git"
-    }
-]
-
-
-
 # Certifications Data
-certifications = [
-    {
-        "name": "Agentic AI Engineer",
-        "organization": "Ready Tensor",
-        "date": "November 2025",
-        "credential": ""
-    },
-    {
-        "name": "LLM Fine-Tuning Specialist",
-        "organization": "Ready Tensor",
-        "date": "May 2026",
-        "credential": ""
-    },
-    {
-        "name": "RAG Systems Expert",
-        "organization": "Ready Tensor",
-        "date": "September 2025",
-        "credential": ""
-    },
-    {
-        "name": "AWS Academy Machine Learning Foundations",
-        "organization": "AWS Academy",
-        "date": "2023",
-        "credential": ""
-    },
-    {
-        "name": "AWS Academy Cloud Foundations",
-        "organization": "AWS Academy",
-        "date": "",
-        "credential": ""
-    },
-    {
-        "name": "Google Data Analytics",
-        "organization": "Coursera",
-        "date": "2023",
-        "credential": ""
-    }
-]
-
+Base.metadata.create_all(bind=engine)
+initialize_database()
 
 
 @app.post("/contact")
@@ -172,7 +73,7 @@ async def contact(
     subject: str = Form(...),
     message: str = Form(...)
 ):
-    
+
     if not name.strip() or not email.strip() or not subject.strip() or not message.strip():
         return RedirectResponse(
             url="/?status=error#contact",
@@ -189,7 +90,6 @@ async def contact(
         url="/?status=success#contact",
         status_code=303
     )
-
 
 
 # Theme toggle endpoint
